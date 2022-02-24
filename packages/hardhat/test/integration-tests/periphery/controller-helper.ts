@@ -189,4 +189,23 @@ describe("Controller helper integration test", function () {
       expect(vaultAfter.collateralAmount.eq(collateralAmount)).to.be.true
     })
   })
+
+  // describe("Flash mint and deposit NFT", async () => {
+  //   it("flash mint and deposit NFT as collateral", async () => {
+  //     const vaultId = (await shortSqueeth.nextId()).sub(1);
+  //     const normFactor = await controller.normalizationFactor()
+  //     const mintWSqueethAmount = ethers.utils.parseUnits('10')
+  //     const mintRSqueethAmount = mintWSqueethAmount.mul(normFactor).div(one)
+  //     const ethPrice = await oracle.getTwap(ethDaiPool.address, weth.address, dai.address, 420, true)
+  //     const scaledEthPrice = ethPrice.div(10000)
+  //     const debtInEth = mintRSqueethAmount.mul(scaledEthPrice).div(one)
+  //     const collateralAmount = debtInEth.mul(3).div(2).add(ethers.utils.parseUnits('0.01'))
+  //     const squeethPrice = await oracle.getTwap(wSqueethPool.address, wSqueeth.address, weth.address, 420, true)
+  //     const collateralToLp = mintWSqueethAmount.mul(squeethPrice).div(one)
+  //     const vaultBefore = await controller.vaults(vaultId)
+  //     const tokenIndexBefore = await (positionManager as INonfungiblePositionManager).totalSupply();
+
+  //     await controllerHelper.connect(depositor).flashswapWMintDepositNft(vaultId, mintWSqueethAmount, collateralAmount.add(collateralToLp), 0, 0, -887220, 887220, {value: collateralToLp});
+  //   })
+  // })
 })
