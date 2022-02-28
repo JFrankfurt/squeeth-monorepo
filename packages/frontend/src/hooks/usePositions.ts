@@ -221,10 +221,6 @@ export const useLPPositions = () => {
     setLoading(true)
   }, [address])
 
-  useEffect(() => {
-    subscribeToNewPositions()
-  }, [])
-
   const subscribeToNewPositions = useCallback(() => {
     subscribeToMore({
       document: POSITIONS_SUBSCRIPTION,
@@ -242,6 +238,12 @@ export const useLPPositions = () => {
     })
   }, [squeethPool, address])
 
+  //console.log(data)
+
+  useEffect(() => {
+    subscribeToNewPositions()
+  }, [subscribeToNewPositions])
+
   const isWethToken0 = useMemo(() => parseInt(weth, 16) < parseInt(oSqueeth, 16), [weth, oSqueeth])
 
   const positionAndFees = useMemo(() => {
@@ -257,14 +259,20 @@ export const useLPPositions = () => {
           tickUpper: Number(position.tickUpper.tickIdx),
         })
 
-        const fees = await manager.methods
-          .collect({
-            tokenId: tokenIdHexString,
-            recipient: address,
-            amount0Max: MAX_UNIT,
-            amount1Max: MAX_UNIT,
-          })
-          .call()
+        let fees = { amount0: '0', amount1: '0' }
+
+        try {
+          fees = await manager.methods
+            .collect({
+              tokenId: tokenIdHexString,
+              recipient: address,
+              amount0Max: MAX_UNIT,
+              amount1Max: MAX_UNIT,
+            })
+            .call()
+        } catch (e) {
+          console.log(e)
+        }
 
         const squeethAmt = isWethToken0
           ? new BigNumber(uniPosition.amount1.toSignificant(18))
@@ -296,7 +304,6 @@ export const useLPPositions = () => {
 
   useEffect(() => {
     if (positionAndFees && !gphLoading) {
-      setLoading(true)
       Promise.all(positionAndFees).then((values) => {
         setActivePositions(values.filter((p) => p.amount0.gt(0) || p.amount1.gt(0)))
         setClosedPositions(values.filter((p) => p.amount0.isZero() && p.amount1.isZero()))
@@ -343,7 +350,7 @@ export const useLPPositions = () => {
           setLoading(false)
       })
     }
-  }, [gphLoading, isWethToken0, positionAndFees.length])
+  }, [gphLoading, isWethToken0, positionAndFees.length, activePositions.length])
 
   return {
     activePositions: activePositions,
